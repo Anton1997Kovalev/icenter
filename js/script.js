@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
+	let $body = document.body;
+
 	function tooltip() {
 		let $tooltip = document.querySelectorAll('.tooltip');
 		$tooltip.forEach(function ($item, indx) {
@@ -58,10 +60,11 @@ document.addEventListener('DOMContentLoaded', function () {
 		});
 
 		let $headerBurgerMenu = document.querySelector('.toggle-header-burger__js');
-		$headerBurgerMenu.addEventListener('click', function(e){
+		$headerBurgerMenu.addEventListener('click', function (e) {
 			let $this = e.target;
 			$this.classList.toggle('_active');
 			document.querySelector('.mob-menu-body').classList.toggle('_active');
+			$body.classList.toggle('_overflow');
 		})
 	}
 	function quantity() {
@@ -102,10 +105,10 @@ document.addEventListener('DOMContentLoaded', function () {
 		});
 		let $ajaxProducts = document.querySelector('.ajax-products');
 		let i = 1;
-		$ajaxProducts.addEventListener('click', function(e){
+		$ajaxProducts.addEventListener('click', function (e) {
 			let $this = e.target;
-			
-			if ($this.classList.contains('change-basket-product-count__js') && $this.classList.contains('minus')){
+
+			if ($this.classList.contains('change-basket-product-count__js') && $this.classList.contains('minus')) {
 				if (i > 1) {
 					i--;
 					$this.parentElement.querySelector('.quantity__count').textContent = i;
@@ -113,11 +116,11 @@ document.addEventListener('DOMContentLoaded', function () {
 					$this.closest('.selected-product__js').querySelector('.selected-products-item__count .price').textContent = price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + ' ₽';
 					$this.closest('.selected-product__js').querySelector('.selected-products-item__count .count').textContent = i + ' шт';
 					$this.closest('.selected-product__js').querySelector('.item-price.current').textContent = (price * i).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + ' ₽';
-				} else{
+				} else {
 					$this.closest('.selected-product__js').querySelector('.selected-products-item__count').classList.add('hidden');
 				}
 				sumProductsPrice(document.querySelector('.selected-basket-products'));
-			} else if ($this.classList.contains('change-basket-product-count__js') && $this.classList.contains('plus')){
+			} else if ($this.classList.contains('change-basket-product-count__js') && $this.classList.contains('plus')) {
 				i++;
 				$this.parentElement.querySelector('.quantity__count').innerHTML = i;
 				let price = Number($this.closest('.selected-products-item').querySelector('.selected-products-item__price').getAttribute('data-product-price'));
@@ -127,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function () {
 				$this.closest('.selected-product__js').querySelector('.selected-products-item__count').classList.remove('hidden');
 				sumProductsPrice(document.querySelector('.selected-basket-products'));
 			}
-			
+
 		})
 
 		let $selectedProductsCategory = document.querySelectorAll('.selected-products');
@@ -193,20 +196,80 @@ document.addEventListener('DOMContentLoaded', function () {
 			}
 		}, 100);
 	}
-
+	function mainSlider() {
+		const swiper = new Swiper('.main-slider__body', {
+			// Optional parameters
+			/*direction: 'vertical',*/
+			loop: false,
+			slidesPerView: 1,
+			spaceBetween: 0,
+			pagination: {
+				el: '.main-slider__pagination',
+				clickable: true,
+				renderBullet: function (index, className) {
+					return '<span class="' + className + '">' + (index + 1) + '</span>';
+				}
+			},
+			clickable: false,
+			navigation: {
+				nextEl: '.main-slider__arrow.right',
+				prevEl: '.main-slider__arrow.left',
+			},
+			// allowTouchMove: false,
+		});
+	}
+	function topProducts() {
+		const swiper = new Swiper('.top-products__slider', {
+			// Optional parameters
+			/*direction: 'vertical',*/
+			loop: false,
+			slidesPerView: 'auto',
+			spaceBetween: 0,
+			clickable: false,
+		});
+	}
+	function ourNews() {
+		const swiper = new Swiper('.our-news__slider-body', {
+			// Optional parameters
+			/*direction: 'vertical',*/
+			loop: false,
+			slidesPerView: 'auto',
+			spaceBetween: 0,
+			navigation: {
+				nextEl: '.our-news__slider-arrow.right',
+				prevEl: '.our-news__slider-arrow.left',
+			},
+			scrollbar: {
+				el: '.our-news__slider-scrollbar',
+				draggable: true,
+			},
+		});
+	}
 
 	tooltip();
 	submenu();
 	menuBody();
 	quantity();
 	selectedProduct();
+	mainSlider();
+	ourNews();
+
+	if (document.documentElement.clientWidth <= 1024) {
+		topProducts();
+	}
 
 	document.addEventListener('mouseup', function (e) {
 		function closePopupsOrTooltips($items, _parentEl, _oneEl) {
 			$items.forEach(function ($item, indx) {
 				if (_oneEl === undefined && $item.contains(e.target) === false) {
 					$item.closest(_parentEl).classList.remove('_active');
-				} else if ($item.contains(e.target) === false && $item.closest(_parentEl).querySelector(_oneEl).contains(e.target) === false) {
+				} else if ($item.contains(e.target) === false && $item.closest(_parentEl).querySelector(_oneEl) && $item.closest(_parentEl).querySelector(_oneEl).contains(e.target) === false) {
+					$item.closest(_parentEl).classList.remove('_active');
+				}
+
+				if ($item.closest(_parentEl).classList.contains('menu-body') && document.querySelector(_oneEl) && document.querySelector(_oneEl).contains(e.target) === false) {
+					$item.closest(_parentEl).style.height = 0;
+					document.querySelector(_oneEl).classList.remove('_active');
 					$item.closest(_parentEl).classList.remove('_active');
 				}
 			})
@@ -215,6 +278,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		closePopupsOrTooltips(document.querySelectorAll('.tooltip__body'), '.tooltip', '.tooltip__head');
 		closePopupsOrTooltips(document.querySelectorAll('.submenu__list'), '.submenu', '.submenu__js>a');
 		closePopupsOrTooltips(document.querySelectorAll('.selected-products__body'), '.selected-products', '.open-selected-products__js');
+		closePopupsOrTooltips(document.querySelectorAll('.menu-body__container'), '.menu-body', '.open-menu-body__js._active');
 	})
 
 	function oAjax(url, $item) {
@@ -263,6 +327,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	function siblingsClass(item, action, nameClass) {
 		getSiblings(item).forEach(function (el, indx) {
+			if (action === 'remove') {
+				el.classList.remove(nameClass);
+			} else if (action === 'add') {
+				el.classList.add(nameClass);
+			} else {
+				el.classList.toggle(nameClass);
+			}
+		})
+	}
+
+	function setClass($item, action, nameClass) {
+		$item.forEach(function (el, indx) {
 			if (action === 'remove') {
 				el.classList.remove(nameClass);
 			} else if (action === 'add') {
