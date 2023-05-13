@@ -245,6 +245,124 @@ document.addEventListener('DOMContentLoaded', function () {
 			},
 		});
 	}
+	function ourReviews() {
+		const swiper = new Swiper('.our-reviews__slider-body', {
+			loop: false,
+			slidesPerView: 'auto',
+			spaceBetween: 0,
+			// Navigation arrows
+			navigation: {
+				nextEl: '.our-reviews__slider-arrow.right',
+				prevEl: '.our-reviews__slider-arrow.left',
+			},
+			scrollbar: {
+				el: '.our-reviews__slider-scrollbar',
+				draggable: true,
+			},
+		});
+	}
+	function productsSlider() {
+		const swiper = new Swiper('.special-suggest__slider-body', {
+			loop: false,
+			slidesPerView: 'auto',
+			spaceBetween: 0,
+			navigation: {
+				nextEl: '.special-suggest__slider-arrow.right',
+				prevEl: '.special-suggest__slider-arrow.left',
+			},
+			scrollbar: {
+				el: '.special-suggest__slider-scrollbar',
+				draggable: true,
+			},
+			allowTouchMove: true,
+			breakpoints: {
+				1024: {
+					allowTouchMove: false,
+
+				},
+			}
+		});
+
+		const productsSwiper = new Swiper('.card-product__slider', {
+			loop: false,
+			slidesPerView: 1,
+			spaceBetween: 30,
+			pagination: {
+				el: '.card-product__slider-pagination',
+				clickable: true,
+			},
+		});
+	}
+	function productsCard() {
+		let i = 0;
+		let _div = document.createElement('div');
+
+
+		document.querySelector('.ajax-cards-products').addEventListener('click', function (e) {
+			let _this = e.target;
+			if (_this.closest('.add-favorites-product__js')) {
+				let $productIcon = _this.closest('.add-favorites-product__js');
+				$productIcon.classList.toggle('_active');
+				$productIcon.closest('.card-product').toggle('_favorite');
+			}
+			if (_this.closest('.look-more-products__js')) {
+				let $moreProdBtn = _this.closest('.look-more-products__js');
+				let _offset = Number($moreProdBtn.getAttribute('data-offset'));
+				let _limit = Number($moreProdBtn.getAttribute('data-limit'));
+				let _total = Number($moreProdBtn.getAttribute('data-total'));
+				let _list = document.querySelector('.special-suggest__wrapper');
+
+				// if (_offset <= _total){
+				let oAjaxCollections = new XMLHttpRequest();
+
+				oAjaxCollections.open("POST", '../ajax/products.php', true);
+				// oAjaxCollections.setRequestHeader('Content-type', 'application/x-www-form-urlecoded; charset=utf-8');
+
+				oAjaxCollections.addEventListener('readystatechange', function () {
+					if ((oAjaxCollections.readyState === 4) && (oAjaxCollections.status === 200)) {
+						_div.insertAdjacentHTML('beforeend', strToHtml(oAjaxCollections.responseText))
+						for (let index = _offset; index < _div.length; index++) {
+							let element = _div[index];
+							i++;
+							_list.insertAdjacentElement('beforeend', element);
+							$moreProdBtn.setAttribute('data-offset', _offset + i);
+						}
+					}
+				});
+				oAjaxCollections.send();
+			}
+		});
+	}
+	function mainAccessories() {
+		const swiper = new Swiper('.main-accessories__slider', {
+			loop: false,
+			slidesPerView: 'auto',
+			spaceBetween: 0,
+			pagination: {
+				el: '.main-accessories__slider-pagination',
+				clickable: true,
+			},
+		});
+	}
+	function proSpecialSuggest() {
+		const swiper = new Swiper('.pro-special-suggest__slider-body', {
+			loop: false,
+			slidesPerView: 'auto',
+			spaceBetween: 0,
+			speed: 1000,
+			pagination: {
+				el: '.pro-special-suggest__slider-pagination',
+				clickable: true,
+				renderBullet: function (index, className) {
+					return '<span class="' + className + '">' + (index + 1) + '</span>';
+				}
+			},
+			navigation: {
+				nextEl: '.pro-special-suggest__slider-arrow.right',
+				prevEl: '.pro-special-suggest__slider-arrow.left',
+			},
+		});
+	}
 
 	tooltip();
 	submenu();
@@ -253,9 +371,14 @@ document.addEventListener('DOMContentLoaded', function () {
 	selectedProduct();
 	mainSlider();
 	ourNews();
+	ourReviews();
+	productsSlider();
+	productsCard();
+	proSpecialSuggest();
 
-	if (document.documentElement.clientWidth <= 1024) {
+	if (document.documentElement.clientWidth <= 1023) {
 		topProducts();
+		mainAccessories();
 	}
 
 	document.addEventListener('mouseup', function (e) {
@@ -281,6 +404,21 @@ document.addEventListener('DOMContentLoaded', function () {
 		closePopupsOrTooltips(document.querySelectorAll('.menu-body__container'), '.menu-body', '.open-menu-body__js._active');
 	})
 
+	let $tabs = document.querySelectorAll('.tab-item__js');
+	$tabs.forEach(function($tab, indx) {
+		$tab.addEventListener('click', function(e){
+			let _this = e.target;
+			if (_this.closest('.click-tab-item__js')){
+				let item = _this.closest('.click-tab-item__js');
+				let i = getIndex(item, $tab.querySelectorAll('.click-tab-item__js'));
+				siblingsClass(item, 'remove', '_active');
+				item.classList.add('_active');
+				setClass($tab.querySelectorAll('.tab-item-block'), 'remove', '_active');
+				$tab.querySelectorAll('.tab-item-block')[i].classList.add('_active');
+			}
+		})
+	})
+
 	function oAjax(url, $item) {
 		let oAjaxCollections = new XMLHttpRequest();
 		oAjaxCollections.open("POST", url, true);
@@ -295,6 +433,10 @@ document.addEventListener('DOMContentLoaded', function () {
 		oAjaxCollections.addEventListener('readystatechange', getData);
 
 		oAjaxCollections.send();
+	}
+
+	function strToHtml(str) {
+		return new DOMParser().parseFromString(str, "text/html").body.children;
 	}
 
 	function getSiblings(elem) {
@@ -346,6 +488,82 @@ document.addEventListener('DOMContentLoaded', function () {
 			} else {
 				el.classList.toggle(nameClass);
 			}
+		})
+	}
+
+	function reverseArr(input) {
+		let ret = new Array;
+		for (var i = input.length - 1; i >= 0; i--) {
+			ret.push(input[i]);
+		}
+		return ret;
+	}
+
+	SmoothScroll({
+		// Время скролла 400 = 0.4 секунды
+		animationTime: 1500,
+		// Размер шага в пикселях
+		stepSize: 50,
+		// Дополнительные настройки:
+		// Ускорение
+		accelerationDelta: 130,
+		// Максимальное ускорение
+		accelerationMax: 1,
+		// Поддержка клавиатуры
+		keyboardSupport: true,
+		// Шаг скролла стрелками на клавиатуре в пикселях
+		arrowScroll: 50,
+		// Pulse (less tweakable)
+		// ratio of "tail" to "acceleration"
+		pulseAlgorithm: false,
+		pulseScale: 4,
+		pulseNormalize: 1,
+		// Поддержка тачпада
+		touchpadSupport: false,
+	})
+
+	function dynamicAdaptive(size) {
+		let $items = document.querySelectorAll('[data-da]');
+		$items.forEach(function ($item, indx) {
+			let _data = $item.getAttribute('data-da').split(',');
+			let _where = _data[0].trim();
+			let _sizeScreen = _data[1].trim();
+			let _pos = _data[2].trim();
+
+			if (size === 'max' && document.documentElement.clientWidth <= _sizeScreen) {
+				moveItem();
+			}
+			if (size === 'min' && document.documentElement.clientWidth >= _sizeScreen) {
+				moveItem();
+			}
+
+			function moveItem() {
+				if (_pos === 'first') {
+					document.querySelectorAll(_where)[indx].insertAdjacentElement('afterbegin', $item);
+				}
+				if (_pos === 'last') {
+					document.querySelectorAll(_where)[indx].insertAdjacentElement('beforeEnd', $item);
+					console.log(true)
+
+				}
+			}
+		})
+	}
+	dynamicAdaptive('max');
+
+	function getIndex(_this, items) {
+		let i;
+		items.forEach(function (item, indx) {
+			if (_this === item) {
+				i = indx;
+			}
+		})
+		return i;
+	}
+
+	function heightNull($items) {
+		$items.forEach(function($item, indx){
+			$item.style.height = 0;
 		})
 	}
 })
