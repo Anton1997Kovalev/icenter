@@ -13,7 +13,7 @@
 <body>
 	<div class="page">
 		<?php include_once "inc/header.php"; ?>
-		<div class="main main-page">
+		<main class="main main-page">
 			<section class="main-slider">
 				<div class="main-slider__container">
 					<div class="main-slider__body _swiper">
@@ -372,7 +372,7 @@
 							</div>
 						</div>
 						<div class="our-news__slider-scrollbar slider-scrollbar swiper-scrollbar"></div>
-						<div class="our-news__slider-arrows slider-arrows black">
+						<div class="our-news__slider-arrows slider-arrows center black">
 							<div class="our-news__slider-arrow slider-arrows__item left">
 								<svg width="10" height="18" viewBox="0 0 10 18" fill="none"
 									xmlns="http://www.w3.org/2000/svg">
@@ -830,13 +830,13 @@
 					</div>
 				</div>
 			</section>
-			<section class="special-suggest">
-				<div class="special-suggest__container container">
-					<h2 class="special-suggest__title">Специальные предложения</h2>
-					<div class="special-suggest__content ajax-cards-products">
-						<div class="special-suggest__slider _swiper">
-							<div class="special-suggest__slider-body">
-								<div class="special-suggest__wrapper swiper-wrapper">
+			<section class="special-suggest card-products">
+				<div class="special-suggest__container card-products__container container">
+					<h2 class="special-suggest__title card-products__title">Специальные предложения</h2>
+					<div class="special-suggest__content card-products__content ajax-cards-products">
+						<div class="special-suggest__slider card-products__slider _swiper">
+							<div class="special-suggest__slider-body card-products__slider-body">
+								<div class="special-suggest__wrapper card-products__slider-wrapper swiper-wrapper">
 									<div class="special-suggest__item swiper-slide special-suggest-item card-product">
 										<div class="special-suggest-item__body card-product__body">
 											<div class="special-suggest-item__marks card-product__marks">
@@ -1364,15 +1364,15 @@
 									</div>
 								</div>
 							</div>
-							<div class="special-suggest__slider-scrollbar slider-scrollbar swiper-scrollbar"></div>
-							<div class="special-suggest__slider-arrows slider-arrows black">
-								<div class="special-suggest__slider-arrow slider-arrows__item left">
+							<div class="special-suggest__slider-scrollbar card-products__slider-scrollbar slider-scrollbar swiper-scrollbar"></div>
+							<div class="special-suggest__slider-arrows card-products__slider-arrows center slider-arrows black">
+								<div class="special-suggest__slider-arrow card-products__slider-arrow slider-arrows__item left">
 									<svg width="10" height="18" viewBox="0 0 10 18" fill="none"
 										xmlns="http://www.w3.org/2000/svg">
 										<path d="M9 1L1 9L9 17" stroke="#EBEBEB" />
 									</svg>
 								</div>
-								<div class="special-suggest__slider-arrow slider-arrows__item right">
+								<div class="special-suggest__slider-arrow card-products__slider-arrow slider-arrows__item right">
 									<svg width="10" height="18" viewBox="0 0 10 18" fill="none"
 										xmlns="http://www.w3.org/2000/svg">
 										<path d="M1 1L9 9L1 17" stroke="#EBEBEB" />
@@ -1380,8 +1380,8 @@
 								</div>
 							</div>
 						</div>
-						<div class="special-suggest__btns">
-							<div class="special-suggest__btn">
+						<div class="special-suggest__btns card-products__btns">
+							<div class="special-suggest__btn card-products__btn">
 								<span class="btn-border look-more-products__js" data-offset="0" data-limit="15"
 									data-total="200">Смотреть ещё 15 предложений</span>
 							</div>
@@ -1892,7 +1892,7 @@
 					</div>
 				</div>
 			</section>
-		</div>
+		</main>
 		<?php include_once "inc/footer.php"; ?>
 		<?php include_once "inc/footer-after.php"; ?>
 	</div>

@@ -263,76 +263,80 @@ document.addEventListener('DOMContentLoaded', function () {
 		});
 	}
 	function productsSlider() {
-		const swiper = new Swiper('.special-suggest__slider-body', {
-			loop: false,
-			slidesPerView: 'auto',
-			spaceBetween: 0,
-			navigation: {
-				nextEl: '.special-suggest__slider-arrow.right',
-				prevEl: '.special-suggest__slider-arrow.left',
-			},
-			scrollbar: {
-				el: '.special-suggest__slider-scrollbar',
-				draggable: true,
-			},
-			allowTouchMove: true,
-			breakpoints: {
-				1024: {
-					allowTouchMove: false,
-
+		if (document.querySelectorAll('.card-products').length) {
+			const swiper = new Swiper('.card-products__slider-body', {
+				loop: false,
+				slidesPerView: 'auto',
+				spaceBetween: 0,
+				navigation: {
+					nextEl: '.card-products__slider-arrow.right',
+					prevEl: '.card-products__slider-arrow.left',
 				},
-			}
-		});
+				scrollbar: {
+					el: '.special-suggest__slider-scrollbar',
+					draggable: true,
+				},
+				allowTouchMove: true,
+				breakpoints: {
+					1024: {
+						allowTouchMove: false,
 
-		const productsSwiper = new Swiper('.card-product__slider', {
-			loop: false,
-			slidesPerView: 1,
-			spaceBetween: 30,
-			pagination: {
-				el: '.card-product__slider-pagination',
-				clickable: true,
-			},
-		});
+					},
+				}
+			});
+
+			const productsSwiper = new Swiper('.card-product__slider', {
+				loop: false,
+				slidesPerView: 1,
+				spaceBetween: 30,
+				pagination: {
+					el: '.card-product__slider-pagination',
+					clickable: true,
+				},
+			});
+		}
 	}
 	function productsCard() {
 		let i = 0;
 		let _div = document.createElement('div');
 
+		if (document.querySelector('.ajax-cards-products')) {
+			document.querySelector('.ajax-cards-products').addEventListener('click', function (e) {
+				let _this = e.target;
+				if (_this.closest('.add-favorites-product__js')) {
+					let $productIcon = _this.closest('.add-favorites-product__js');
+					$productIcon.classList.toggle('_active');
+					$productIcon.closest('.card-product').toggle('_favorite');
+				}
+				if (_this.closest('.look-more-products__js')) {
+					let $moreProdBtn = _this.closest('.look-more-products__js');
+					let _offset = Number($moreProdBtn.getAttribute('data-offset'));
+					let _limit = Number($moreProdBtn.getAttribute('data-limit'));
+					let _total = Number($moreProdBtn.getAttribute('data-total'));
+					let _list = document.querySelector('.special-suggest__wrapper');
 
-		document.querySelector('.ajax-cards-products').addEventListener('click', function (e) {
-			let _this = e.target;
-			if (_this.closest('.add-favorites-product__js')) {
-				let $productIcon = _this.closest('.add-favorites-product__js');
-				$productIcon.classList.toggle('_active');
-				$productIcon.closest('.card-product').toggle('_favorite');
-			}
-			if (_this.closest('.look-more-products__js')) {
-				let $moreProdBtn = _this.closest('.look-more-products__js');
-				let _offset = Number($moreProdBtn.getAttribute('data-offset'));
-				let _limit = Number($moreProdBtn.getAttribute('data-limit'));
-				let _total = Number($moreProdBtn.getAttribute('data-total'));
-				let _list = document.querySelector('.special-suggest__wrapper');
+					// if (_offset <= _total){
+					let oAjaxCollections = new XMLHttpRequest();
 
-				// if (_offset <= _total){
-				let oAjaxCollections = new XMLHttpRequest();
+					oAjaxCollections.open("POST", '../ajax/products.php', true);
+					// oAjaxCollections.setRequestHeader('Content-type', 'application/x-www-form-urlecoded; charset=utf-8');
 
-				oAjaxCollections.open("POST", '../ajax/products.php', true);
-				// oAjaxCollections.setRequestHeader('Content-type', 'application/x-www-form-urlecoded; charset=utf-8');
-
-				oAjaxCollections.addEventListener('readystatechange', function () {
-					if ((oAjaxCollections.readyState === 4) && (oAjaxCollections.status === 200)) {
-						_div.insertAdjacentHTML('beforeend', strToHtml(oAjaxCollections.responseText))
-						for (let index = _offset; index < _div.length; index++) {
-							let element = _div[index];
-							i++;
-							_list.insertAdjacentElement('beforeend', element);
-							$moreProdBtn.setAttribute('data-offset', _offset + i);
+					oAjaxCollections.addEventListener('readystatechange', function () {
+						if ((oAjaxCollections.readyState === 4) && (oAjaxCollections.status === 200)) {
+							_div.insertAdjacentHTML('beforeend', strToHtml(oAjaxCollections.responseText))
+							for (let index = _offset; index < _div.length; index++) {
+								let element = _div[index];
+								i++;
+								_list.insertAdjacentElement('beforeend', element);
+								$moreProdBtn.setAttribute('data-offset', _offset + i);
+							}
 						}
-					}
-				});
-				oAjaxCollections.send();
-			}
-		});
+					});
+					oAjaxCollections.send();
+				}
+			});
+		}
+
 	}
 
 	function mainAccessories() {
@@ -388,41 +392,56 @@ document.addEventListener('DOMContentLoaded', function () {
 		});
 	}
 	let $accordions = document.querySelectorAll('._accordions');
-	if ($accordions.length){
-		$accordions.forEach(function($accordion, indx){
-			if ($accordion.classList.contains('mob')){
-				if (documentWidth < 1024){
-					$accordion.addEventListener('click', function(e){
+	if ($accordions.length) {
+		$accordions.forEach(function ($accordion, indx) {
+			if ($accordion.classList.contains('mob')) {
+				if (documentWidth < 1024) {
+					$accordion.addEventListener('click', function (e) {
 						let _this = e.target;
-				
-						if (_this.closest('.toggle-accordion-item__js')){
+
+						if (_this.closest('.toggle-accordion-item__js')) {
 							let $item = _this.closest('.toggle-accordion-item__js');
 							$item.closest('.accordion-item').classList.toggle('_active');
-							if ($item.closest('.accordion-item').classList.contains('_active')){
+							if ($item.closest('.accordion-item').classList.contains('_active')) {
 								$item.closest('.accordion-item').querySelector('.accordion-item__body').style.height = $item.closest('.accordion-item').querySelector('.accordion-item__content').offsetHeight + 'px';
-							} else{
+							} else {
 								$item.closest('.accordion-item').querySelector('.accordion-item__body').style.height = 0;
 							}
 						}
 					});
 				}
-			} else{
-				$accordion.addEventListener('click', function(e){
+			} else {
+				$accordion.addEventListener('click', function (e) {
 					let _this = e.target;
-			
-					if (_this.closest('.toggle-accordion-item__js')){
+
+					if (_this.closest('.toggle-accordion-item__js')) {
 						let $item = _this.closest('.toggle-accordion-item__js');
 						$item.closest('.accordion-item').classList.toggle('_active');
-						if ($item.closest('.accordion-item').classList.contains('_active')){
+						if ($item.closest('.accordion-item').classList.contains('_active')) {
 							$item.closest('.accordion-item').querySelector('.accordion-item__body').style.height = $item.closest('.accordion-item').querySelector('.accordion-item__content').offsetHeight + 'px';
-						} else{
+						} else {
 							$item.closest('.accordion-item').querySelector('.accordion-item__body').style.height = 0;
 						}
 					}
 				});
 			}
-			
+
 		})
+	}
+	function browsingHistory() {
+		const swiper = new Swiper('.browsing-history__slider-body', {
+			loop: false,
+			slidesPerView: 'auto',
+			spaceBetween: 0,
+			navigation: {
+				nextEl: '.browsing-history__slider-arrow.right',
+				prevEl: '.browsing-history__slider-arrow.left',
+			},
+			scrollbar: {
+				el: '.browsing-history__slider-scrollbar',
+				draggable: true,
+			},
+		});
 	}
 
 	tooltip();
@@ -436,6 +455,8 @@ document.addEventListener('DOMContentLoaded', function () {
 	productsSlider();
 	productsCard();
 	proSpecialSuggest();
+	browsingHistory();
+	maxHeightBlock(document.querySelectorAll('.browsing-history-product'));
 
 	if (documentWidth <= 1023) {
 		topProducts();
@@ -612,6 +633,23 @@ document.addEventListener('DOMContentLoaded', function () {
 		})
 	}
 	dynamicAdaptive('max');
+
+	function maxHeightBlock($items) {
+		let maxHeight = 0;
+		$items.forEach(function($item, indx){
+			let _height = $item.offsetHeight;
+			if (maxHeight < _height){
+				maxHeight = _height;
+			}
+		});
+		$items.forEach(function($item, indx){
+			$item.style.height = maxHeight + 'px';
+		})
+	}
+
+	function numberWithSpaces(x) {
+		return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+	}
 
 	function getIndex(_this, items) {
 		let i;
